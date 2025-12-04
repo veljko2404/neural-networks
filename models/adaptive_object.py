@@ -2,7 +2,7 @@ import warnings
 from abc import abstractmethod
 
 from layers.function import Function
-from loss_functions.abstract_loss_function import Optimizer
+from optimizers.abstract_optimizer import Optimizer
 
 
 class AdaptiveObject(Function):
