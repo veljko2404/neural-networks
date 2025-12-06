@@ -1,4 +1,5 @@
 from data_scalers.scalers import *
+from metrics.metrics import Accuracy, MSEMetric
 from models.feedforward_nn import Model
 import pandas as pd
 from backend.backend import xp
@@ -19,7 +20,7 @@ def test_regression():
     xp.random.shuffle(data)
 
     N = len(data)
-    training_data_ratio = 0.8
+    training_data_ratio = 0.7
     training_data_size = int(N * training_data_ratio)
     training_set = data[:training_data_size]
     test_set = data[training_data_size:]
@@ -38,7 +39,7 @@ def test_regression():
     train_y = scaler_y.transform(train_y)
     test_y = scaler_y.transform(test_y)
 
-    model = Model(name="regression_1")
+    model = Model(name="regression")
     model.add_layer(DenseLayer(train_X.shape[1], 16, name='Dense layer 1'))
     model.add_layer(ReLU())
     model.add_layer(DenseLayer(16, 32, name='Dense layer 2'))
@@ -47,14 +48,14 @@ def test_regression():
 
     model.set_loss(MSE())
     model.set_optimizer(SGD(lr=0.1))
-    model.fit((train_X, train_y), print_every=1, batch_size=64, max_epochs=200)
+    acc = MSEMetric()
+    model.fit((train_X, train_y), print_every=10, batch_size=64, max_epochs=1)
 
-    # model.load_params("regression_1.pickle")
-    model.evaluate((test_X, test_y))
+    model.evaluate((test_X, test_y), metrics=[acc])
 
-    i = 7
-    prediction = model(test_X[i-1:i])
-    data = scaler_x.inverse(test_X[i - 1:i])
-    prediction = scaler_y.inverse(prediction)
-    y = scaler_y.inverse(test_y[i - 1:i])
-    print("Inference: \n\tdata:{}\n\tprediction:{}\n\tlabel:{}".format(data, prediction, y))
+    """
+    Training time = 0.0010039806365966797 seconds
+    Parameters saved at saved_models/regression_1.pickle
+    Test set loss = 0.024888369058985962
+    Metric: MSE, value: 0.0498
+    """

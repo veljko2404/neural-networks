@@ -116,3 +116,22 @@ class Accuracy(Metric):
         self._count += num_of_samples
 
         return float(a / num_of_samples)
+
+class MSEMetric(Metric):
+    def __init__(self):
+        super().__init__("MSE")
+        self._sum = 0
+        self._count = 0
+
+    def calculate(self, y, t):
+        mse = xp.mean((y - t)**2)
+        self._sum += mse
+        self._count += 1
+        return float(mse)
+
+    def calculate_for_epoch(self):
+        value = self._sum / self._count
+        self.values_per_epoch.append(value)
+        self._sum = 0
+        self._count = 0
+        return value

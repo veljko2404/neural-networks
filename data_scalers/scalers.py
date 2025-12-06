@@ -75,14 +75,14 @@ class SigmoidScaler(Scaler):
         return xp.log(transformed_data) - xp.log(1 - transformed_data)
 
 
-if __name__ == '__main__':
-    test_matrix = xp.array([1, 3, 4, -10, 3, -4, 0, 6, 2, -1]).reshape((5, 2))
-    xp.random.shuffle(test_matrix)
-    # scaler = MinMaxScaler()
-    # scaler = StandardizationScaler()
-    scaler = SigmoidScaler()
-    transformed_data = scaler.transform(test_matrix)
-    print(test_matrix)
-    print(transformed_data)
-    test_matrix = scaler.inverse(transformed_data)
-    print(test_matrix)
+# if __name__ == '__main__':
+#     test_matrix = xp.array([1, 3, 4, -10, 3, -4, 0, 6, 2, -1]).reshape((5, 2))
+#     xp.random.shuffle(test_matrix)
+#     # scaler = MinMaxScaler()
+#     # scaler = StandardizationScaler()
+#     #scaler = SigmoidScaler()
+#     transformed_data = scaler.transform(test_matrix)
+#     print(test_matrix)
+#     print(transformed_data)
+#     test_matrix = scaler.inverse(transformed_data)
+#     print(test_matrix)
