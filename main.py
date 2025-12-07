@@ -1,5 +1,6 @@
 from test_examples.basic_rnn import test_basic_RNN
 from test_examples.binary_classification import test_binary_classification
+from test_examples.lstm_and_gru import test_LSTM_GRU
 from test_examples.multiclass_classification import test_multiclass_classification, UseDataset
 from test_examples.regression import test_regression
 from test_examples.test_mnist import test_mnist
@@ -9,9 +10,9 @@ if __name__ == '__main__':
     # test_mnist()
     # test_binary_classification()
     # test_multiclass_classification(UseDataset.IRIS)
-    test_basic_RNN()
+    # test_basic_RNN()
+    test_LSTM_GRU()
     # test_CNN()
-    # test_LSTM_GRU()
     # test_VAE()
     # test_GAN()
     pass
