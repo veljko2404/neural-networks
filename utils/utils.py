@@ -165,7 +165,6 @@ def to_one_hot(t: xp.ndarray, num_of_classes: int):
 
 
 def get_mnist_data(flat_images: bool = False, max_num_of_samples: int = None, max_num_of_classes: int = None, _8x8: bool = False) -> (xp.ndarray, xp.ndarray):
-
     if _8x8:
         data = load_digits()
         X_flat = data['data']
@@ -173,7 +172,7 @@ def get_mnist_data(flat_images: bool = False, max_num_of_samples: int = None, ma
         data_numpy = xp.hstack((t.reshape(-1, 1), X_flat))
         im_size = 8
     else:
-        mnist_dataframe = pd.read_csv('data/mnist_csvs/mnist_train.csv')
+        mnist_dataframe = pd.read_csv('data/mnist.csv')
         data_numpy = xp.array(mnist_dataframe.to_numpy())
         im_size = 28
 
