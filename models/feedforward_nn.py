@@ -43,7 +43,7 @@ class Model(AdaptiveObject):
 
     def save_params(self, filename: str = None):
         if filename is None:
-            filename = "saved_models/" + self.name + ".pickle"
+            filename = "saved_models/params_" + self.name + ".pickle"
 
         with open(filename, "wb") as file:
             pickle.dump(self.parameters, file)
@@ -59,6 +59,21 @@ class Model(AdaptiveObject):
             input_tensor = self._layers[i].forward(input_tensor)
 
         return input_tensor
+
+    def save(self, filename: str = None):
+        if filename is None:
+            filename = "saved_models/model_" + self.name + ".pickle"
+
+        with open(filename, "wb") as file:
+            pickle.dump(self, file)
+
+        print("Model saved at", filename)
+
+    @staticmethod
+    def load(filename: str):
+        with open(filename, "rb") as file:
+            model = pickle.load(file)
+        return model
 
     def backward(self, dEdY: xp.ndarray) -> xp.ndarray:
         dEdX_next = dEdY
@@ -149,6 +164,7 @@ class Model(AdaptiveObject):
                         self.training = False
                         print("Training time = " + str(time.time() - start_time) + ' seconds')
                         self.save_params()
+                        self.save()
                         return
                     prev_val_loss = val_loss
 
@@ -158,6 +174,7 @@ class Model(AdaptiveObject):
                     self.print_progress(loss, epoch + 1, "Training", metrics)
                     print("Training time = " + str(time.time() - start_time) + ' seconds')
                     self.save_params()
+                    self.save()
                     return
 
             prev_loss = loss
@@ -165,6 +182,7 @@ class Model(AdaptiveObject):
         self.training = False
         print("Training time = " + str(time.time() - start_time) + ' seconds')
         self.save_params()
+        self.save()
 
     def evaluate(self, test_data: Union[Tuple[xp.ndarray, xp.ndarray], Dataset], metrics: List[Metric] = []) -> float:
         """
