@@ -20,6 +20,6 @@ if __name__ == '__main__':
     # test_CNN(True)
     # test_VAE()
     # test_GAN()
-    # cat_or_dog()
-    btc_price_lstm()
+    cat_or_dog()
+    # btc_price_lstm()
     pass

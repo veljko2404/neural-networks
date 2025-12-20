@@ -46,7 +46,7 @@ def get_images(img_size = 128, max_photos = 1000):
 def cat_or_dog():
     model = Model(name="cat_or_dog")
 
-    X, y = get_images(img_size = 128, max_photos = 500)
+    X, y = get_images(img_size = 128, max_photos = 5000)
     X = X.transpose(0, 3, 1, 2)
 
     idx = xp.random.permutation(len(X))
