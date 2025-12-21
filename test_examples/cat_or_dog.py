@@ -13,7 +13,7 @@ from utils.dataset import Dataset
 import os
 import cv2
 
-def get_images(img_size = 128, max_photos = 1000):
+def get_images(img_size = 128, max_photos = 500):
     X = []
     y = []
     base_path = "data/PetImages"
@@ -23,7 +23,6 @@ def get_images(img_size = 128, max_photos = 1000):
         count = 0
         for filename in os.listdir(folder):
             path = os.path.join(folder, filename)
-
             if count >= max_photos:
                 break
 
@@ -44,9 +43,65 @@ def get_images(img_size = 128, max_photos = 1000):
     return X, y
 
 def cat_or_dog():
+    model = Model(name="cat_or_dog_vgg")
+
+    X, y = get_images(img_size=224, max_photos=5000)
+    X = X.transpose(0, 3, 1, 2)
+
+    idx = xp.random.permutation(len(X))
+    X, y = X[idx], y[idx]
+
+    split = int(0.8 * len(X))
+    train_X, test_X = X[:split], X[split:]
+    train_y, test_y = y[:split], y[split:]
+
+    algorithm = Matmul
+
+    model.add_layer(Convolution2D(3, 16, 3, padding=1, algorithm=algorithm()))
+    model.add_layer(ReLU())
+    model.add_layer(Convolution2D(16, 16, 3, padding=1, algorithm=algorithm()))
+    model.add_layer(ReLU())
+    model.add_layer(Pooling(16, kernel_size=2, stride=2))
+
+    model.add_layer(Convolution2D(16, 32, 3, padding=1, algorithm=algorithm()))
+    model.add_layer(ReLU())
+    model.add_layer(Convolution2D(32, 32, 3, padding=1, algorithm=algorithm()))
+    model.add_layer(ReLU())
+    model.add_layer(Pooling(32, kernel_size=2, stride=2))
+
+    model.add_layer(Convolution2D(32, 64, 3, padding=1, algorithm=algorithm()))
+    model.add_layer(ReLU())
+    model.add_layer(Convolution2D(64, 64, 3, padding=1, algorithm=algorithm()))
+    model.add_layer(ReLU())
+    model.add_layer(Pooling(64, kernel_size=2, stride=2))
+
+    tmp = model(X[0:1])
+
+    model.add_layer(FlatteningLayer())
+    model.add_layer(DenseLayer(tmp.size, 128, name="fc1"))
+    model.add_layer(ReLU())
+
+    model.add_layer(DenseLayer(128, 1, name="fc2"))
+    model.add_layer(Sigmoid())
+
+    model.set_loss(BinaryCrossEntropy())
+    model.set_optimizer(RMSProp(2e-4, 0.98))
+
+    model.fit(
+        Dataset(train_X, train_y),
+        batch_size=4,
+        max_epochs=3,
+        print_every=1,
+        metrics=[BinaryAccuracy()]
+    )
+
+    model.evaluate(Dataset(test_X, test_y), metrics=[BinaryAccuracy()])
+
+"""
+def cat_or_dog():
     model = Model(name="cat_or_dog")
 
-    X, y = get_images(img_size = 128, max_photos = 5000)
+    X, y = get_images(img_size = 128, max_photos = 3000)
     X = X.transpose(0, 3, 1, 2)
 
     idx = xp.random.permutation(len(X))
@@ -81,7 +136,7 @@ def cat_or_dog():
     model.fit(Dataset(train_X, train_y), print_every=1, batch_size=32, max_epochs=7, metrics=[BinaryAccuracy()])
     model.evaluate(Dataset(test_X, test_y), metrics=[BinaryAccuracy()])
 
-    """
+    
     Training:	Epoch: 1, loss: 0.9852502701681126.
     Metric: Training accuracy value: 0.5062
     --------------------------------------------------
