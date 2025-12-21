@@ -3,7 +3,7 @@ import numpy as xp
 import matplotlib.pyplot as plt
 from models.feedforward_nn import Model
 
-model = Model.load("../saved_models/model_cat_or_dog.pickle")
+model = Model.load("../saved_models/model_cat_or_dog_vgg.pickle")
 
 def load_single_image(path, img_size=128):
     img = cv2.imread(path)
@@ -23,7 +23,7 @@ image_paths = [
     "../data/PetImages/Cat/3698.jpg",
     "../data/PetImages/Cat/8355.jpg",
     "../data/PetImages/Dog/8040.jpg",
-    "../data/PetImages/Dog/9259.jpg",
+    "../data/PetImages/Dog/9458.jpg",
 ]
 
 results = []
@@ -51,5 +51,5 @@ plt.tight_layout()
 plt.show()
 
 """
-Results are saved at saved_models/cat_dog_prediction_results.jpg
+Results are saved at saved_models/cat_dog_prediction_results_vgg.jpg
 """

@@ -13,7 +13,8 @@ from utils.dataset import Dataset
 import os
 import cv2
 
-def get_images(img_size = 128, max_photos = 500):
+
+def get_images(img_size=128, max_photos=500):
     X = []
     y = []
     base_path = "data/PetImages"
@@ -42,10 +43,11 @@ def get_images(img_size = 128, max_photos = 500):
 
     return X, y
 
+
 def cat_or_dog():
     model = Model(name="cat_or_dog_vgg")
 
-    X, y = get_images(img_size=224, max_photos=5000)
+    X, y = get_images(img_size=128, max_photos=1000)
     X = X.transpose(0, 3, 1, 2)
 
     idx = xp.random.permutation(len(X))
@@ -87,87 +89,46 @@ def cat_or_dog():
     model.set_loss(BinaryCrossEntropy())
     model.set_optimizer(RMSProp(2e-4, 0.98))
 
-    model.fit(
-        Dataset(train_X, train_y),
-        batch_size=4,
-        max_epochs=3,
-        print_every=1,
-        metrics=[BinaryAccuracy()]
-    )
+    model.fit(Dataset(train_X, train_y), batch_size=16, max_epochs=7, print_every=1, metrics=[BinaryAccuracy()])
 
     model.evaluate(Dataset(test_X, test_y), metrics=[BinaryAccuracy()])
 
-"""
-def cat_or_dog():
-    model = Model(name="cat_or_dog")
+    """
 
-    X, y = get_images(img_size = 128, max_photos = 3000)
-    X = X.transpose(0, 3, 1, 2)
+    This model was trained using a VGGNet architecture on a dataset of 1,000 images resized to 128×128 pixels.
+    Training was performed with a batch size of 16 over 7 epochs and took 6 hours, 12 minutes, and 17 seconds
+    (22,337 seconds) in total. The final model achieved an accuracy of 0.7 on the test set.
 
-    idx = xp.random.permutation(len(X))
-    X, y = X[idx], y[idx]
-
-    split = int(0.8 * len(X))
-    train_X, test_X = X[:split], X[split:]
-    train_y, test_y = y[:split], y[split:]
-
-    algorithm = Matmul
-
-    model.add_layer(Convolution2D(3, 6, 5, padding=2, algorithm=algorithm()))
-    model.add_layer(Pooling(6, kernel_size=2, stride=2))
-    model.add_layer(ReLU())
-
-    model.add_layer(Convolution2D(6, 16, 3, padding=1, algorithm=algorithm()))
-    model.add_layer(Pooling(16, kernel_size=2, stride=2))
-    model.add_layer(ReLU())
-
-    tmp = model(X[0:1])
-
-    model.add_layer(FlatteningLayer())
-    model.add_layer(DenseLayer(tmp.size, 32, name='Dense layer 1'))
-    model.add_layer(ReLU())
-
-    model.add_layer(DenseLayer(32, 1, name='Dense layer 2'))
-    model.add_layer(Sigmoid())
-    model.set_loss(BinaryCrossEntropy())
-
-    model.set_optimizer(RMSProp(2e-4, 0.98))
-
-    model.fit(Dataset(train_X, train_y), print_every=1, batch_size=32, max_epochs=7, metrics=[BinaryAccuracy()])
-    model.evaluate(Dataset(test_X, test_y), metrics=[BinaryAccuracy()])
-
-    
-    Training:	Epoch: 1, loss: 0.9852502701681126.
-    Metric: Training accuracy value: 0.5062
+    Training:	Epoch: 1, loss: 0.7105776146361638.
+    Metric: Training accuracy value: 0.5406
     --------------------------------------------------
-    
-    Training:	Epoch: 2, loss: 0.7493922622857921.
-    Metric: Training accuracy value: 0.5538
+
+    Training:	Epoch: 2, loss: 0.651739532191784.
+    Metric: Training accuracy value: 0.6056
     --------------------------------------------------
-    
-    Training:	Epoch: 3, loss: 0.660190242526714.
-    Metric: Training accuracy value: 0.5875
+
+    Training:	Epoch: 3, loss: 0.6165487161801664.
+    Metric: Training accuracy value: 0.6575
     --------------------------------------------------
-    
-    Training:	Epoch: 4, loss: 0.6674418362996009.
-    Metric: Training accuracy value: 0.6238
+
+    Training:	Epoch: 4, loss: 0.5758527832430931.
+    Metric: Training accuracy value: 0.7012
     --------------------------------------------------
-    
-    Training:	Epoch: 5, loss: 0.6005293695966163.
-    Metric: Training accuracy value: 0.6738
+
+    Training:	Epoch: 5, loss: 0.5430741257798565.
+    Metric: Training accuracy value: 0.7356
     --------------------------------------------------
-    
-    Training:	Epoch: 6, loss: 0.5817361235875602.
-    Metric: Training accuracy value: 0.7025
+
+    Training:	Epoch: 6, loss: 0.5119452749895291.
+    Metric: Training accuracy value: 0.7556
     --------------------------------------------------
-    
-    Training:	Epoch: 7, loss: 0.5746428384036584.
-    Metric: Training accuracy value: 0.6888
-    --------------------------------------------------
-    
-    Training time = 1028.6819405555725 seconds
-    Parameters saved at saved_models/params_cat_or_dog.pickle
-    Model saved at saved_models/model_cat_or_dog.pickle
-    Test set loss = 0.6410190798913474
-    Metric: accuracy, value: 0.61
+
+    Training:	Epoch: 7, loss: 0.4713852604165614.
+    Metric: Training accuracy value: 0.7719
+    --------------------------------------------------    
+
+    Parameters saved at saved_models/params_cat_or_dog_vgg.pickle
+    Model saved at saved_models/model_cat_or_dog_vgg.pickle
+    Test set loss = 0.5896997355367971
+    Metric: accuracy, value: 0.7
     """
