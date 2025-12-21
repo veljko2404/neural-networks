@@ -3,6 +3,7 @@ from test_examples.binary_classification import test_binary_classification
 from test_examples.btc_prices_lstm import btc_price_lstm
 from test_examples.cat_or_dog import cat_or_dog
 from test_examples.convolution_2D import test_CNN
+from test_examples.five_cat_species import five_cat_species
 from test_examples.lstm_and_gru import test_LSTM_GRU
 from test_examples.multiclass_classification import test_multiclass_classification, UseDataset
 from test_examples.regression import test_regression
@@ -20,6 +21,7 @@ if __name__ == '__main__':
     # test_CNN(True)
     # test_VAE()
     # test_GAN()
-    cat_or_dog()
+    # cat_or_dog()
     # btc_price_lstm()
+    five_cat_species()
     pass
