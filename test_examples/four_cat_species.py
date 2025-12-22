@@ -42,16 +42,30 @@ def get_images(img_size=128, max_photos=500):
 
     return X, y
 
+def augment_batch(X):
+    X_aug = X.copy()
+
+    for i in range(len(X_aug)):
+        img = X_aug[i]
+
+        if xp.random.rand() < 0.4:
+            img = xp.flip(img, axis=2)
+
+        X_aug[i] = img
+
+    return X_aug
+
 def four_cat_species():
     model = Model(name="four_cat_species")
 
-    X, y = get_images(img_size=128, max_photos=3)
+    X, y = get_images(img_size=128, max_photos=220)
     X = X.transpose(0, 3, 1, 2)
     idx = xp.random.permutation(len(X))
     X, y = X[idx], y[idx]
 
     split = int(0.8 * len(X))
     train_X, test_X = X[:split], X[split:]
+    train_X = augment_batch(train_X)
     train_y, test_y = y[:split], y[split:]
 
     algorithm = Matmul
@@ -80,14 +94,14 @@ def four_cat_species():
     model.add_layer(DenseLayer(tmp.shape[1], 128, name="fc1"))
     model.add_layer(ReLU())
 
-    model.add_layer(Dropout(p=0.5))
+    model.add_layer(Dropout(p=0.3))
 
     model.add_layer(DenseLayer(128, 4, name="fc2"))
 
     model.set_loss(CrossEntropy(from_logits=True, one_hot=False))
     model.set_optimizer(RMSProp(2e-4, 0.98))
 
-    model.fit(Dataset(train_X, train_y), batch_size=16, max_epochs=10, print_every=1, metrics=[Accuracy(one_hot=False)])
+    model.fit(Dataset(train_X, train_y), batch_size=16, max_epochs=12, print_every=1, metrics=[Accuracy(one_hot=False)])
 
     model.evaluate(Dataset(test_X, test_y), metrics=[Accuracy(one_hot=False)])
 
