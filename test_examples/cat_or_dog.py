@@ -59,13 +59,7 @@ def cat_or_dog():
 
     algorithm = Matmul
 
-    model.add_layer(Convolution2D(3, 16, 3, padding=1, algorithm=algorithm()))
-    model.add_layer(ReLU())
-    model.add_layer(Convolution2D(16, 16, 3, padding=1, algorithm=algorithm()))
-    model.add_layer(ReLU())
-    model.add_layer(Pooling(16, kernel_size=2, stride=2))
-
-    model.add_layer(Convolution2D(16, 32, 3, padding=1, algorithm=algorithm()))
+    model.add_layer(Convolution2D(3, 32, 3, padding=1, algorithm=algorithm()))
     model.add_layer(ReLU())
     model.add_layer(Convolution2D(32, 32, 3, padding=1, algorithm=algorithm()))
     model.add_layer(ReLU())
@@ -77,19 +71,30 @@ def cat_or_dog():
     model.add_layer(ReLU())
     model.add_layer(Pooling(64, kernel_size=2, stride=2))
 
-    tmp = model(X[0:1])
+    model.add_layer(Convolution2D(64, 128, 3, padding=1, algorithm=algorithm()))
+    model.add_layer(ReLU())
+    model.add_layer(Convolution2D(128, 128, 3, padding=1, algorithm=algorithm()))
+    model.add_layer(ReLU())
+    model.add_layer(Pooling(128, kernel_size=2, stride=2))
 
     model.add_layer(FlatteningLayer())
-    model.add_layer(DenseLayer(tmp.size, 128, name="fc1"))
+    tmp = model(X[0:1])
+    model.add_layer(DenseLayer(tmp.shape[1], 64))
     model.add_layer(ReLU())
 
-    model.add_layer(DenseLayer(128, 1, name="fc2"))
+    model.add_layer(DenseLayer(64, 1))
     model.add_layer(Sigmoid())
 
     model.set_loss(BinaryCrossEntropy())
-    model.set_optimizer(RMSProp(2e-4, 0.98))
+    model.set_optimizer(RMSProp(1e-4, 0.98))
 
-    model.fit(Dataset(train_X, train_y), batch_size=16, max_epochs=7, print_every=1, metrics=[BinaryAccuracy()])
+    model.fit(
+        Dataset(train_X, train_y),
+        batch_size=8,
+        max_epochs=8,
+        print_every=1,
+        metrics=[BinaryAccuracy()]
+    )
 
     model.evaluate(Dataset(test_X, test_y), metrics=[BinaryAccuracy()])
 

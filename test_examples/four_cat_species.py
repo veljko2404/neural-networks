@@ -1,3 +1,4 @@
+from layers.dropout_layer import Dropout
 from loss_functions.cross_entropy import CrossEntropy
 from models.feedforward_nn import Model
 from layers.activation_functions.relu import ReLU
@@ -44,9 +45,8 @@ def get_images(img_size=128, max_photos=500):
 def four_cat_species():
     model = Model(name="four_cat_species")
 
-    X, y = get_images(img_size=128, max_photos=220)
+    X, y = get_images(img_size=128, max_photos=3)
     X = X.transpose(0, 3, 1, 2)
-
     idx = xp.random.permutation(len(X))
     X, y = X[idx], y[idx]
 
@@ -80,8 +80,10 @@ def four_cat_species():
     model.add_layer(DenseLayer(tmp.shape[1], 128, name="fc1"))
     model.add_layer(ReLU())
 
+    model.add_layer(Dropout(p=0.5))
+
     model.add_layer(DenseLayer(128, 4, name="fc2"))
-    #model.add_layer(Softmax())
+
     model.set_loss(CrossEntropy(from_logits=True, one_hot=False))
     model.set_optimizer(RMSProp(2e-4, 0.98))
 
