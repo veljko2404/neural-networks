@@ -1,4 +1,3 @@
-from layers.activation_functions.softmax import Softmax
 from loss_functions.cross_entropy import CrossEntropy
 from models.feedforward_nn import Model
 from layers.activation_functions.relu import ReLU
@@ -7,18 +6,17 @@ from layers.conv_layer.convolution_layer import Convolution2D
 from layers.conv_layer.pooling import Pooling
 from layers.dense_layer import DenseLayer
 from layers.flattening_layer import FlatteningLayer
-from metrics.metrics import BinaryAccuracy, Accuracy
+from metrics.metrics import Accuracy
 from optimizers.rmsprop import RMSProp
 from utils.dataset import Dataset
 import os
 import cv2
 
-
 def get_images(img_size=128, max_photos=500):
     X = []
     y = []
-    base_path = "data/five cats photos"
-    classes = {"caracal": 0, "cheetah": 1, "lions": 2, "puma": 3, "tiger": 4}
+    base_path = "data/four cats photos"
+    classes = {"caracal": 0, "cheetah": 1, "puma": 2, "tiger": 3}
     for class_name, label in classes.items():
         folder = os.path.join(base_path, class_name)
         count = 0
@@ -43,10 +41,10 @@ def get_images(img_size=128, max_photos=500):
 
     return X, y
 
-def five_cat_species():
-    model = Model(name="five_cat_species")
+def four_cat_species():
+    model = Model(name="four_cat_species")
 
-    X, y = get_images(img_size=96, max_photos=200)
+    X, y = get_images(img_size=128, max_photos=220)
     X = X.transpose(0, 3, 1, 2)
 
     idx = xp.random.permutation(len(X))
@@ -82,11 +80,59 @@ def five_cat_species():
     model.add_layer(DenseLayer(tmp.shape[1], 128, name="fc1"))
     model.add_layer(ReLU())
 
-    model.add_layer(DenseLayer(128, 5, name="fc2"))
-    model.add_layer(Softmax())
-    model.set_loss(CrossEntropy())
+    model.add_layer(DenseLayer(128, 4, name="fc2"))
+    #model.add_layer(Softmax())
+    model.set_loss(CrossEntropy(from_logits=True, one_hot=False))
     model.set_optimizer(RMSProp(2e-4, 0.98))
 
-    model.fit(Dataset(train_X, train_y), batch_size=8, max_epochs=10, print_every=1, metrics=[Accuracy()])
+    model.fit(Dataset(train_X, train_y), batch_size=16, max_epochs=10, print_every=1, metrics=[Accuracy(one_hot=False)])
 
-    model.evaluate(Dataset(test_X, test_y), metrics=[Accuracy()])
+    model.evaluate(Dataset(test_X, test_y), metrics=[Accuracy(one_hot=False)])
+
+    """
+    Training:	Epoch: 1, loss: 1.4050306111569921.
+    Metric: Training accuracy value: 0.3551
+    --------------------------------------------------
+    
+    Training:	Epoch: 2, loss: 1.0849290005380459.
+    Metric: Training accuracy value: 0.5412
+    --------------------------------------------------
+    
+    Training:	Epoch: 3, loss: 0.8996473714633182.
+    Metric: Training accuracy value: 0.6321
+    --------------------------------------------------
+    
+    Training:	Epoch: 4, loss: 0.7921498459766568.
+    Metric: Training accuracy value: 0.6733
+    --------------------------------------------------
+    
+    Training:	Epoch: 5, loss: 0.7215252857097872.
+    Metric: Training accuracy value: 0.7131
+    --------------------------------------------------
+    
+    Training:	Epoch: 6, loss: 0.5985978220936891.
+    Metric: Training accuracy value: 0.7756
+    --------------------------------------------------
+    
+    Training:	Epoch: 7, loss: 0.4886457759192295.
+    Metric: Training accuracy value: 0.8338
+    --------------------------------------------------
+    
+    Training:	Epoch: 8, loss: 0.4757494149998417.
+    Metric: Training accuracy value: 0.8409
+    --------------------------------------------------
+    
+    Training:	Epoch: 9, loss: 0.40932746721502106.
+    Metric: Training accuracy value: 0.858
+    --------------------------------------------------
+    
+    Training:	Epoch: 10, loss: 0.3485473704323293.
+    Metric: Training accuracy value: 0.8849
+    --------------------------------------------------
+    
+    Training time = 709.0170538425446 seconds
+    Parameters saved at saved_models/params_four_cat_species.pickle
+    Model saved at saved_models/model_four_cat_species.pickle
+    Test set loss = 0.8067368927760947
+    Metric: accuracy, value: 0.6591
+    """
