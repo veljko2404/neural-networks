@@ -58,7 +58,7 @@ def augment_batch(X):
 def four_cat_species():
     model = Model(name="four_cat_species")
 
-    X, y = get_images(img_size=128, max_photos=220)
+    X, y = get_images(img_size=128, max_photos=200)
     X = X.transpose(0, 3, 1, 2)
     idx = xp.random.permutation(len(X))
     X, y = X[idx], y[idx]
@@ -106,49 +106,57 @@ def four_cat_species():
     model.evaluate(Dataset(test_X, test_y), metrics=[Accuracy(one_hot=False)])
 
     """
-    Training:	Epoch: 1, loss: 1.4050306111569921.
-    Metric: Training accuracy value: 0.3551
+    Training:	Epoch: 1, loss: 1.6199990549864367.
+    Metric: Training accuracy value: 0.325
     --------------------------------------------------
     
-    Training:	Epoch: 2, loss: 1.0849290005380459.
-    Metric: Training accuracy value: 0.5412
+    Training:	Epoch: 2, loss: 1.167497616646283.
+    Metric: Training accuracy value: 0.5062
     --------------------------------------------------
     
-    Training:	Epoch: 3, loss: 0.8996473714633182.
-    Metric: Training accuracy value: 0.6321
+    Training:	Epoch: 3, loss: 0.9862018669424707.
+    Metric: Training accuracy value: 0.5938
     --------------------------------------------------
     
-    Training:	Epoch: 4, loss: 0.7921498459766568.
-    Metric: Training accuracy value: 0.6733
+    Training:	Epoch: 4, loss: 0.8160154450915517.
+    Metric: Training accuracy value: 0.6672
     --------------------------------------------------
     
-    Training:	Epoch: 5, loss: 0.7215252857097872.
-    Metric: Training accuracy value: 0.7131
+    Training:	Epoch: 5, loss: 0.7450031935779748.
+    Metric: Training accuracy value: 0.7172
     --------------------------------------------------
     
-    Training:	Epoch: 6, loss: 0.5985978220936891.
-    Metric: Training accuracy value: 0.7756
+    Training:	Epoch: 6, loss: 0.63734198513755.
+    Metric: Training accuracy value: 0.7609
     --------------------------------------------------
     
-    Training:	Epoch: 7, loss: 0.4886457759192295.
-    Metric: Training accuracy value: 0.8338
+    Training:	Epoch: 7, loss: 0.5631328429696507.
+    Metric: Training accuracy value: 0.7938
     --------------------------------------------------
     
-    Training:	Epoch: 8, loss: 0.4757494149998417.
-    Metric: Training accuracy value: 0.8409
+    Training:	Epoch: 8, loss: 0.4953285643142243.
+    Metric: Training accuracy value: 0.8203
     --------------------------------------------------
     
-    Training:	Epoch: 9, loss: 0.40932746721502106.
-    Metric: Training accuracy value: 0.858
+    Training:	Epoch: 9, loss: 0.4142275705765579.
+    Metric: Training accuracy value: 0.8422
     --------------------------------------------------
     
-    Training:	Epoch: 10, loss: 0.3485473704323293.
-    Metric: Training accuracy value: 0.8849
+    Training:	Epoch: 10, loss: 0.352854996067847.
+    Metric: Training accuracy value: 0.8812
     --------------------------------------------------
     
-    Training time = 709.0170538425446 seconds
+    Training:	Epoch: 11, loss: 0.31934097807264095.
+    Metric: Training accuracy value: 0.9125
+    --------------------------------------------------
+    
+    Training:	Epoch: 12, loss: 0.26520870917449435.
+    Metric: Training accuracy value: 0.9219
+    --------------------------------------------------
+    
+    Training time = 15598.963396310806 seconds
     Parameters saved at saved_models/params_four_cat_species.pickle
-    Model saved at saved_models/model_four_cat_species.pickle
-    Test set loss = 0.8067368927760947
-    Metric: accuracy, value: 0.6591
+    Model saved at saved_models/model_four_cat_species_73_accuracy.pickle
+    Test set loss = 0.7861926929086269
+    Metric: accuracy, value: 0.7375
     """

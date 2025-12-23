@@ -1,14 +1,15 @@
 import os
 import cv2
-from backend.backend import xp
+import numpy as xp
 import matplotlib.pyplot as plt
 from models.feedforward_nn import Model
 
-model = Model.load("saved_models/model_four_cat_species.pickle")
+model = Model.load("../saved_models/model_four_cat_species_73_accuracy.pickle")
+model.training = False
 
 class_names = ["caracal", "cheetah", "puma", "tiger"]
 
-base_dir = "data/four cats photos/test"
+base_dir = "../data/four cats photos/test"
 folders = ["CARACAL", "CHEETAH", "PUMA", "TIGER"]
 
 def load_single_image(path, img_size=128):
@@ -27,6 +28,8 @@ def load_single_image(path, img_size=128):
 
 def predict_single_image(model, x):
     logits = model(x)
+
+    logits = logits - xp.max(logits, axis=1, keepdims=True)
     probs = xp.exp(logits)
     probs = probs / xp.sum(probs, axis=1, keepdims=True)
 
@@ -40,10 +43,13 @@ fig, axes = plt.subplots(len(folders), 4, figsize=(16, 4 * len(folders)))
 
 for row, folder in enumerate(folders):
     folder_path = os.path.join(base_dir, folder)
-    image_files = sorted(
-    f for f in os.listdir(folder_path)
-    if f.lower().endswith((".jpg", ".jpeg", ".png")))[:4]
 
+    image_files = sorted(
+        f for f in os.listdir(folder_path)
+        if f.lower().endswith((".jpg", ".jpeg", ".png"))
+    )[:4]
+
+    true_label = class_names.index(folder.lower())
 
     for col, img_name in enumerate(image_files):
         path = os.path.join(folder_path, img_name)
@@ -52,16 +58,17 @@ for row, folder in enumerate(folders):
         pred_idx, confidence = predict_single_image(model, x)
         pred_class = class_names[pred_idx]
 
+        is_correct = (pred_idx == true_label)
+        symbol = "✓" if is_correct else "✗"
+        title_color = "green" if is_correct else "red"
+
         ax = axes[row, col]
         ax.imshow(original_img)
         ax.axis("off")
-        ax.set_title(f"{pred_class}\n{confidence:.2f}", fontsize=10)
+
+        ax.set_title(f"{pred_class} {symbol}\n{confidence:.2f}", fontsize=10, color=title_color)
 
     axes[row, 0].set_ylabel(folder, fontsize=12, rotation=0, labelpad=40)
 
 plt.tight_layout()
 plt.show()
-
-"""
-Results saved at saved_models/four_cats_prediction_results.jpg
-"""
